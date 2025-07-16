@@ -1,5 +1,6 @@
 import { PostCard } from "@/components/feed/PostCard"
 import { CreatePostModal } from "@/components/post/CreatePostModal"
+import { usePosts } from "@/contexts/PostsContext"
 
 // Mock data for demonstration
 const mockPosts = [
@@ -61,6 +62,7 @@ const mockPosts = [
 ]
 
 export default function Home() {
+  const { posts } = usePosts();
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6">
@@ -102,7 +104,7 @@ export default function Home() {
 
         {/* Posts Feed */}
         <div className="space-y-6">
-          {mockPosts.map((post) => (
+          {posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
         </div>

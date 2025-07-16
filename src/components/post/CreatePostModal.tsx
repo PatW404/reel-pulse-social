@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
+import { usePosts } from "@/contexts/PostsContext"
+import { useToast } from "@/hooks/use-toast"
 
 interface CreatePostModalProps {
   children: React.ReactNode
@@ -25,6 +27,8 @@ const prizeTypes = [
 
 export function CreatePostModal({ children }: CreatePostModalProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const { addPost } = usePosts()
+  const { toast } = useToast()
   const [caption, setCaption] = useState("")
   const [enableGiveaway, setEnableGiveaway] = useState(false)
   const [prizeType, setPrizeType] = useState("")
@@ -48,16 +52,56 @@ export function CreatePostModal({ children }: CreatePostModalProps) {
   }
 
   const handlePost = () => {
-    // Handle post creation logic here
-    console.log({
-      caption,
-      enableGiveaway,
-      prizeType,
-      endDate,
-      endTime,
-      entryRequirements
-    })
-    setIsOpen(false)
+    if (!caption.trim()) {
+      toast({
+        title: "Caption required",
+        description: "Please add a caption to your post.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const newPost = {
+      author: {
+        name: 'You',
+        username: '@you',
+        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
+      },
+      content: caption,
+      contest: enableGiveaway ? {
+        enabled: true,
+        prizeType,
+        endDate: endDate ? format(endDate, 'yyyy-MM-dd') : '',
+        endTime,
+        entryRequirements: Object.keys(entryRequirements).filter(key => entryRequirements[key as keyof typeof entryRequirements])
+      } : undefined,
+      tags: []
+    };
+
+    addPost(newPost);
+    
+    // Reset form
+    setCaption('');
+    setEnableGiveaway(false);
+    setPrizeType('');
+    setEndDate(undefined);
+    setEndTime('23:59');
+    setEntryRequirements({
+      follow: false,
+      fan: false,
+      like: false,
+      comment: false,
+      tag: false,
+      share: false,
+      hashtag: false
+    });
+    
+    setIsOpen(false);
+    
+    toast({
+      title: "Post created!",
+      description: "Your post has been published successfully."
+    });
   }
 
   return (

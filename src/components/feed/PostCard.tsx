@@ -4,31 +4,10 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Post } from "@/contexts/PostsContext"
 
 interface PostCardProps {
-  post: {
-    id: string
-    author: {
-      name: string
-      username: string
-      avatar?: string
-    }
-    content: string
-    media?: {
-      type: 'image' | 'video' | 'text'
-      url?: string
-    }
-    contest?: {
-      isActive: boolean
-      endTime: string
-      prize: string
-    }
-    tags: string[]
-    likes: number
-    comments: number
-    shares: number
-    timestamp: string
-  }
+  post: Post
 }
 
 export function PostCard({ post }: PostCardProps) {
@@ -75,7 +54,7 @@ export function PostCard({ post }: PostCardProps) {
 
       <CardContent className="space-y-4">
         {/* Contest Badge */}
-        {post.contest?.isActive && (
+        {post.contest?.enabled && (
           <div className="contest-badge rounded-lg p-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
@@ -83,7 +62,7 @@ export function PostCard({ post }: PostCardProps) {
             </div>
             <div className="flex items-center gap-1 text-sm">
               <Clock className="h-3 w-3" />
-              <span>Ends {post.contest.endTime}</span>
+              <span>Ends {post.contest.endDate} at {post.contest.endTime}</span>
             </div>
           </div>
         )}
