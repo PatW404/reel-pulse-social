@@ -1,4 +1,5 @@
 import { PostCard } from "@/components/feed/PostCard"
+import { CreatePostModal } from "@/components/post/CreatePostModal"
 
 // Mock data for demonstration
 const mockPosts = [
@@ -77,9 +78,11 @@ export default function Home() {
                 <span className="text-sm font-medium">You</span>
               </div>
               <div className="flex-1">
-                <button className="w-full text-left px-4 py-3 bg-muted rounded-full text-muted-foreground hover:bg-muted/80 transition-colors">
-                  Start a post...
-                </button>
+                <CreatePostModal>
+                  <button className="w-full text-left px-4 py-3 bg-muted rounded-full text-muted-foreground hover:bg-muted/80 transition-colors">
+                    Start a post...
+                  </button>
+                </CreatePostModal>
               </div>
             </div>
             
