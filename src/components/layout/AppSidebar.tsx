@@ -1,6 +1,7 @@
 import { useState } from "react"
-import { Home, Video, MessageCircle, User, Plus, Sun, Moon, Sparkles } from "lucide-react"
+import { Home, Video, MessageCircle, User, Plus, Sun, Moon, Sparkles, LogOut } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
+import { useAuth } from "@/hooks/useAuth"
 
 import {
   Sidebar,
@@ -27,6 +28,7 @@ export function AppSidebar() {
   const location = useLocation()
   const currentPath = location.pathname
   const [isDark, setIsDark] = useState(false)
+  const { signOut } = useAuth()
   
   const isCollapsed = state === "collapsed"
 
@@ -85,8 +87,8 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Theme Toggle */}
-        <div className="mt-auto p-4 border-t border-sidebar-border">
+        {/* Theme Toggle & Logout */}
+        <div className="mt-auto p-4 border-t border-sidebar-border space-y-2">
           <Button
             variant="ghost"
             size={isCollapsed ? "icon" : "default"}
@@ -97,6 +99,16 @@ export function AppSidebar() {
             {!isCollapsed && (
               <span className="ml-2">{isDark ? 'Light' : 'Dark'} Mode</span>
             )}
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size={isCollapsed ? "icon" : "default"}
+            onClick={signOut}
+            className="w-full text-destructive hover:text-destructive hover:bg-destructive/10"
+          >
+            <LogOut className="h-4 w-4" />
+            {!isCollapsed && <span className="ml-2">Sign Out</span>}
           </Button>
         </div>
       </SidebarContent>
