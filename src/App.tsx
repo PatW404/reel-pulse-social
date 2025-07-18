@@ -11,6 +11,7 @@ import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Messages from "./pages/Messages";
 import Reels from "./pages/Reels";
+import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -52,6 +53,11 @@ const App = () => (
                   <AppLayout>
                     <Reels />
                   </AppLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/settings" element={
+                <ProtectedRoute>
+                  <Settings />
                 </ProtectedRoute>
               } />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

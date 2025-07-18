@@ -1,17 +1,32 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "./AppSidebar"
 import { RightPanel } from "./RightPanel"
-import { Search, Bell, Plus } from "lucide-react"
+import { Search, Bell, Plus, User, Settings, Trophy, DollarSign, Crown, Shield, Moon, LogOut, ExternalLink, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { CreatePostModal } from "@/components/post/CreatePostModal"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Separator } from "@/components/ui/separator"
+import { Switch } from "@/components/ui/switch"
+import { useAuth } from "@/hooks/useAuth"
+import { useNavigate } from "react-router-dom"
+import { useState } from "react"
 
 interface AppLayoutProps {
   children: React.ReactNode
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
+  const { signOut } = useAuth()
+  const navigate = useNavigate()
+  const [isDarkMode, setIsDarkMode] = useState(false)
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode)
+    document.documentElement.classList.toggle('dark')
+  }
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
@@ -50,10 +65,92 @@ export function AppLayout({ children }: AppLayoutProps) {
                 <span className="absolute -top-1 -right-1 h-2 w-2 bg-destructive rounded-full"></span>
               </Button>
               
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" alt="Your profile" />
-                <AvatarFallback>You</AvatarFallback>
-              </Avatar>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" alt="Your profile" />
+                      <AvatarFallback>You</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80" align="end" forceMount>
+                  <div className="grid gap-4">
+                    <div className="space-y-2">
+                      <h4 className="font-medium leading-none">u/Commercial-Seesaw-96</h4>
+                    </div>
+                    <Separator />
+                    <div className="grid gap-2">
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Button variant="ghost" className="justify-start gap-2 h-10" onClick={() => navigate('/profile')}>
+                          <User className="h-4 w-4" />
+                          <span className="text-sm">View Profile</span>
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Button variant="ghost" className="justify-start gap-2 h-10">
+                          <User className="h-4 w-4" />
+                          <span className="text-sm">Edit Avatar</span>
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Button variant="ghost" className="justify-start gap-2 h-10">
+                          <Trophy className="h-4 w-4" />
+                          <span className="text-sm">Achievements</span>
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Button variant="ghost" className="justify-start gap-2 h-10">
+                          <DollarSign className="h-4 w-4" />
+                          <span className="text-sm">Earn</span>
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Button variant="ghost" className="justify-start gap-2 h-10">
+                          <Crown className="h-4 w-4" />
+                          <span className="text-sm">Premium</span>
+                        </Button>
+                      </div>
+                      <Separator />
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Mod Mode</span>
+                        <Switch />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Dark Mode</span>
+                        <Switch checked={isDarkMode} onCheckedChange={toggleDarkMode} />
+                      </div>
+                      <Separator />
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Button variant="ghost" className="justify-start gap-2 h-10" onClick={() => navigate('/settings')}>
+                          <Settings className="h-4 w-4" />
+                          <span className="text-sm">Settings & Privacy</span>
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Button variant="ghost" className="justify-start gap-2 h-10" onClick={signOut}>
+                          <LogOut className="h-4 w-4" />
+                          <span className="text-sm">Log Out</span>
+                        </Button>
+                      </div>
+                      <Separator />
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Button variant="ghost" className="justify-start gap-2 h-10">
+                          <ExternalLink className="h-4 w-4" />
+                          <span className="text-sm">Advertise on SocialSpark</span>
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Button variant="ghost" className="justify-start gap-2 h-10">
+                          <Star className="h-4 w-4" />
+                          <span className="text-sm">Try SocialSpark Pro</span>
+                          <span className="ml-auto text-xs bg-orange-500 text-white px-1.5 py-0.5 rounded">BETA</span>
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
           </header>
           
