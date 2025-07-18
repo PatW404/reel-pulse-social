@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { X, Calendar, Image, Video, Users, Radio } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -43,12 +43,49 @@ export function CreatePostModal({ children }: CreatePostModalProps) {
     share: false,
     hashtag: false
   })
+  const [selectedMedia, setSelectedMedia] = useState<{ type: 'image' | 'video'; url: string; file: File } | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleRequirementChange = (requirement: string, checked: boolean) => {
     setEntryRequirements(prev => ({
       ...prev,
       [requirement]: checked
     }))
+  }
+
+  const handleMediaUpload = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    const isVideo = file.type.startsWith('video/')
+    const isImage = file.type.startsWith('image/')
+    
+    if (!isVideo && !isImage) {
+      toast({
+        title: "Invalid file type",
+        description: "Please select an image or video file.",
+        variant: "destructive"
+      })
+      return
+    }
+
+    const url = URL.createObjectURL(file)
+    setSelectedMedia({
+      type: isVideo ? 'video' : 'image',
+      url,
+      file
+    })
+  }
+
+  const removeMedia = () => {
+    if (selectedMedia) {
+      URL.revokeObjectURL(selectedMedia.url)
+      setSelectedMedia(null)
+    }
   }
 
   const handlePost = () => {
@@ -68,6 +105,10 @@ export function CreatePostModal({ children }: CreatePostModalProps) {
         avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
       },
       content: caption,
+      media: selectedMedia ? {
+        type: selectedMedia.type,
+        url: selectedMedia.url
+      } : undefined,
       contest: enableGiveaway ? {
         enabled: true,
         prizeType,
@@ -82,6 +123,7 @@ export function CreatePostModal({ children }: CreatePostModalProps) {
     
     // Reset form
     setCaption('');
+    removeMedia();
     setEnableGiveaway(false);
     setPrizeType('');
     setEndDate(undefined);
@@ -132,7 +174,7 @@ export function CreatePostModal({ children }: CreatePostModalProps) {
           <div className="space-y-3">
             <Label className="text-sm font-medium">Add to your post</Label>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="flex items-center gap-2">
+              <Button variant="outline" size="sm" className="flex items-center gap-2" onClick={handleMediaUpload}>
                 <Image className="w-4 h-4" />
                 Image/Video
               </Button>
@@ -145,7 +187,43 @@ export function CreatePostModal({ children }: CreatePostModalProps) {
                 Go Live
               </Button>
             </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,video/*"
+              onChange={handleFileChange}
+              className="hidden"
+            />
           </div>
+
+          {/* Media Preview */}
+          {selectedMedia && (
+            <div className="space-y-2">
+              <div className="relative">
+                {selectedMedia.type === 'image' ? (
+                  <img
+                    src={selectedMedia.url}
+                    alt="Selected media"
+                    className="w-full h-48 object-cover rounded-lg"
+                  />
+                ) : (
+                  <video
+                    src={selectedMedia.url}
+                    className="w-full h-48 object-cover rounded-lg"
+                    controls
+                  />
+                )}
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="absolute top-2 right-2 h-8 w-8 bg-background/80"
+                  onClick={removeMedia}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
 
           {/* Enable Giveaway */}
           <div className="flex items-center justify-between">

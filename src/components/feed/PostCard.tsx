@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Heart, MessageCircle, Share, MoreHorizontal, Calendar, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -13,6 +13,7 @@ interface PostCardProps {
 export function PostCard({ post }: PostCardProps) {
   const [isLiked, setIsLiked] = useState(false)
   const [likesCount, setLikesCount] = useState(post.likes)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   const handleLike = () => {
     setIsLiked(!isLiked)
@@ -28,6 +29,32 @@ export function PostCard({ post }: PostCardProps) {
     if (diffInHours < 24) return `${diffInHours}h ago`
     return `${Math.floor(diffInHours / 24)}d ago`
   }
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            video.play().catch(() => {
+              // Autoplay failed, which is normal in some browsers
+            })
+          } else {
+            video.pause()
+          }
+        })
+      },
+      { threshold: 0.5 } // Play when 50% of video is visible
+    )
+
+    observer.observe(video)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [post.media?.type])
 
   return (
     <Card className="w-full max-w-2xl mx-auto mb-4 post-enter">
@@ -96,9 +123,13 @@ export function PostCard({ post }: PostCardProps) {
           {post.media && post.media.type === 'video' && post.media.url && (
             <div className="rounded-lg overflow-hidden bg-black">
               <video 
+                ref={videoRef}
                 src={post.media.url} 
                 className="w-full h-auto max-h-96 object-cover"
                 controls
+                muted
+                loop
+                playsInline
               />
             </div>
           )}
