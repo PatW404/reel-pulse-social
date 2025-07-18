@@ -52,22 +52,12 @@ export function AppSidebar() {
             </div>
             {!isCollapsed && (
               <div>
-                <h1 className="text-lg font-bold">SocialSpark</h1>
+                <h1 className="text-lg font-bold text-sidebar-foreground">SocialSpark</h1>
               </div>
             )}
           </div>
         </div>
 
-        {/* Create Post Button */}
-        <div className="p-4">
-          <Button 
-            className="w-full bg-primary hover:bg-primary-hover text-primary-foreground font-medium"
-            size={isCollapsed ? "icon" : "default"}
-          >
-            <Plus className="h-4 w-4" />
-            {!isCollapsed && <span className="ml-2">Create Post</span>}
-          </Button>
-        </div>
 
         <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
