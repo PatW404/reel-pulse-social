@@ -2,67 +2,9 @@ import { PostCard } from "@/components/feed/PostCard"
 import { CreatePostModal } from "@/components/post/CreatePostModal"
 import { usePosts } from "@/contexts/PostsContext"
 
-// Mock data for demonstration
-const mockPosts = [
-  {
-    id: "1",
-    author: {
-      name: "Alex Doe",
-      username: "alexdoe",
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face"
-    },
-    content: "Building cool things with code! 🚀 Just launched my new portfolio website and I'm super excited to share it with everyone. What do you think about the design?",
-    media: {
-      type: 'image' as const,
-      url: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&h=400&fit=crop"
-    },
-    contest: {
-      isActive: true,
-      endTime: "2h",
-      prize: "MacBook Pro"
-    },
-    tags: ["webdev", "portfolio", "coding"],
-    likes: 45,
-    comments: 12,
-    shares: 5,
-    timestamp: "2024-01-15T10:30:00Z"
-  },
-  {
-    id: "2",
-    author: {
-      name: "Jane Smith",
-      username: "janesmith",
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face"
-    },
-    content: "Hey! Did you see the new SocialSpark features? They added an AI-powered fake account filter for giveaways. Pretty neat.",
-    tags: ["socialspark", "ai", "features"],
-    likes: 128,
-    comments: 34,
-    shares: 18,
-    timestamp: "2024-01-15T08:15:00Z"
-  },
-  {
-    id: "3",
-    author: {
-      name: "Chris Lee",
-      username: "chrislee",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face"
-    },
-    content: "Working on some exciting new projects! Can't wait to share more details soon. Stay tuned! 🎯",
-    media: {
-      type: 'video' as const,
-      url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-    },
-    tags: ["projects", "excited"],
-    likes: 89,
-    comments: 23,
-    shares: 11,
-    timestamp: "2024-01-15T06:45:00Z"
-  }
-]
-
 export default function Home() {
   const { posts } = usePosts();
+  
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6">
