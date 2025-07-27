@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { EditProfileModal } from "@/components/profile/EditProfileModal"
 
 const profileData = {
   name: "Alex Doe",
@@ -107,9 +108,11 @@ export default function Profile() {
               <Button variant="outline" size="icon">
                 <MessageCircle className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="icon">
-                <Settings className="h-4 w-4" />
-              </Button>
+              <EditProfileModal profileData={profileData}>
+                <Button variant="outline" size="icon">
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </EditProfileModal>
             </div>
           </div>
 
