@@ -18,7 +18,7 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
-  const { signOut } = useAuth()
+  const { signOut, user } = useAuth()
   const navigate = useNavigate()
   const [isDarkMode, setIsDarkMode] = useState(false)
 
@@ -77,7 +77,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 <PopoverContent className="w-80" align="end" forceMount>
                   <div className="grid gap-4">
                     <div className="space-y-2">
-                      <h4 className="font-medium leading-none">u/Commercial-Seesaw-96</h4>
+                      <h4 className="font-medium leading-none">@{user?.user_metadata?.username || user?.email?.split('@')[0] || 'user'}</h4>
                     </div>
                     <Separator />
                     <div className="grid gap-2">
@@ -93,29 +93,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                           <span className="text-sm">Edit Avatar</span>
                         </Button>
                       </div>
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Button variant="ghost" className="justify-start gap-2 h-10">
-                          <Trophy className="h-4 w-4" />
-                          <span className="text-sm">Achievements</span>
-                        </Button>
-                      </div>
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Button variant="ghost" className="justify-start gap-2 h-10">
-                          <DollarSign className="h-4 w-4" />
-                          <span className="text-sm">Earn</span>
-                        </Button>
-                      </div>
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Button variant="ghost" className="justify-start gap-2 h-10">
-                          <Crown className="h-4 w-4" />
-                          <span className="text-sm">Premium</span>
-                        </Button>
-                      </div>
                       <Separator />
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">Mod Mode</span>
-                        <Switch />
-                      </div>
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium">Dark Mode</span>
                         <Switch checked={isDarkMode} onCheckedChange={toggleDarkMode} />

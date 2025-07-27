@@ -1,5 +1,6 @@
 import { useState, useRef } from "react"
-import { X, Calendar, Image, Video, Users, Radio } from "lucide-react"
+import { X, Calendar, Image, Video, Users, Radio, BarChart3 } from "lucide-react"
+import { CreatePollModal } from "@/components/post/CreatePollModal"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -178,10 +179,12 @@ export function CreatePostModal({ children }: CreatePostModalProps) {
                 <Image className="w-4 h-4" />
                 Image/Video
               </Button>
-              <Button variant="outline" size="sm" className="flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                Tag users
-              </Button>
+              <CreatePollModal>
+                <Button variant="outline" size="sm" className="flex items-center gap-2">
+                  <BarChart3 className="w-4 h-4" />
+                  Poll
+                </Button>
+              </CreatePollModal>
               <Button variant="outline" size="sm" className="flex items-center gap-2">
                 <Radio className="w-4 h-4" />
                 Go Live
