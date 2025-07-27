@@ -1,6 +1,8 @@
 import { PostCard } from "@/components/feed/PostCard"
 import { CreatePostModal } from "@/components/post/CreatePostModal"
+import { CreatePollModal } from "@/components/post/CreatePollModal"
 import { usePosts } from "@/contexts/PostsContext"
+import { BarChart3 } from "lucide-react"
 
 export default function Home() {
   const { posts } = usePosts();
@@ -31,9 +33,12 @@ export default function Home() {
             </div>
             
             <div className="flex items-center gap-4 mt-4 pt-4 border-t border-border">
-              <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-green-600 hover:bg-green-50 rounded-lg transition-colors">
-                📹 Video
-              </button>
+              <CreatePollModal>
+                <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+                  <BarChart3 className="h-4 w-4" />
+                  Create Poll
+                </button>
+              </CreatePollModal>
               <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                 📷 Photo
               </button>

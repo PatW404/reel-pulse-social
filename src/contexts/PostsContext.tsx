@@ -1,5 +1,24 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
+export interface PollOption {
+  id: string;
+  text: string;
+  votes: number;
+}
+
+export interface Poll {
+  question: string;
+  options: PollOption[];
+  duration: {
+    days: number;
+    hours: number;
+    minutes: number;
+  };
+  endTime: string;
+  totalVotes: number;
+  userVoted?: string; // ID of the option the user voted for
+}
+
 export interface Post {
   id: string;
   author: {
@@ -12,6 +31,7 @@ export interface Post {
     type: 'image' | 'video';
     url: string;
   };
+  poll?: Poll;
   contest?: {
     enabled: boolean;
     prizeType: string;
@@ -30,6 +50,7 @@ export interface Post {
 interface PostsContextType {
   posts: Post[];
   addPost: (post: Omit<Post, 'id' | 'timestamp' | 'likes' | 'comments' | 'shares'>) => void;
+  voteOnPoll: (postId: string, optionId: string) => void;
 }
 
 const PostsContext = createContext<PostsContextType | undefined>(undefined);
@@ -118,8 +139,32 @@ export const PostsProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setPosts(prevPosts => [post, ...prevPosts]);
   };
 
+  const voteOnPoll = (postId: string, optionId: string) => {
+    setPosts(prevPosts => 
+      prevPosts.map(post => {
+        if (post.id === postId && post.poll) {
+          const updatedOptions = post.poll.options.map(option => ({
+            ...option,
+            votes: option.id === optionId ? option.votes + 1 : option.votes
+          }));
+          
+          return {
+            ...post,
+            poll: {
+              ...post.poll,
+              options: updatedOptions,
+              totalVotes: post.poll.totalVotes + 1,
+              userVoted: optionId
+            }
+          };
+        }
+        return post;
+      })
+    );
+  };
+
   return (
-    <PostsContext.Provider value={{ posts, addPost }}>
+    <PostsContext.Provider value={{ posts, addPost, voteOnPoll }}>
       {children}
     </PostsContext.Provider>
   );

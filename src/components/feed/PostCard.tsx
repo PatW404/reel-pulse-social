@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from "react"
-import { Heart, MessageCircle, Share, MoreHorizontal, Calendar, Clock } from "lucide-react"
+import { Heart, MessageCircle, Share, MoreHorizontal, Calendar, Clock, BarChart3 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Post } from "@/contexts/PostsContext"
+import { Progress } from "@/components/ui/progress"
+import { Post, usePosts } from "@/contexts/PostsContext"
 
 interface PostCardProps {
   post: Post
@@ -14,10 +15,39 @@ export function PostCard({ post }: PostCardProps) {
   const [isLiked, setIsLiked] = useState(false)
   const [likesCount, setLikesCount] = useState(post.likes)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const { voteOnPoll } = usePosts()
 
   const handleLike = () => {
     setIsLiked(!isLiked)
     setLikesCount(prev => isLiked ? prev - 1 : prev + 1)
+  }
+
+  const handleVote = (optionId: string) => {
+    if (post.poll && !post.poll.userVoted) {
+      voteOnPoll(post.id, optionId)
+    }
+  }
+
+  const isPollEnded = () => {
+    if (!post.poll) return false
+    return new Date() > new Date(post.poll.endTime)
+  }
+
+  const getTimeRemaining = () => {
+    if (!post.poll) return ''
+    const now = new Date()
+    const endTime = new Date(post.poll.endTime)
+    const diff = endTime.getTime() - now.getTime()
+    
+    if (diff <= 0) return 'Poll ended'
+    
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+    
+    if (days > 0) return `${days}d ${hours}h left`
+    if (hours > 0) return `${hours}h ${minutes}m left`
+    return `${minutes}m left`
   }
 
   const formatTime = (timestamp: string) => {
@@ -131,6 +161,67 @@ export function PostCard({ post }: PostCardProps) {
                 loop
                 playsInline
               />
+            </div>
+          )}
+
+          {/* Poll */}
+          {post.poll && (
+            <div className="border border-border rounded-lg p-4 space-y-3">
+              <div className="flex items-center gap-2 mb-3">
+                <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium text-muted-foreground">Poll</span>
+                <span className="text-xs text-muted-foreground ml-auto">
+                  {getTimeRemaining()}
+                </span>
+              </div>
+              
+              <div className="space-y-2">
+                {post.poll.options.map((option) => {
+                  const percentage = post.poll!.totalVotes > 0 
+                    ? Math.round((option.votes / post.poll!.totalVotes) * 100) 
+                    : 0
+                  const hasVoted = post.poll!.userVoted
+                  const isSelected = post.poll!.userVoted === option.id
+                  const canVote = !hasVoted && !isPollEnded()
+
+                  return (
+                    <div key={option.id} className="space-y-1">
+                      <button
+                        onClick={() => handleVote(option.id)}
+                        disabled={!canVote}
+                        className={`w-full p-3 text-left rounded-lg border transition-colors relative overflow-hidden ${
+                          canVote 
+                            ? 'hover:bg-muted border-border' 
+                            : 'cursor-default'
+                        } ${
+                          isSelected 
+                            ? 'border-primary bg-primary/5' 
+                            : 'border-border'
+                        }`}
+                      >
+                        {hasVoted && (
+                          <div 
+                            className="absolute inset-0 bg-primary/10"
+                            style={{ width: `${percentage}%` }}
+                          />
+                        )}
+                        <div className="relative flex items-center justify-between">
+                          <span className="text-sm font-medium">{option.text}</span>
+                          {hasVoted && (
+                            <span className="text-xs text-muted-foreground">
+                              {percentage}% ({option.votes})
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    </div>
+                  )
+                })}
+              </div>
+              
+              <div className="text-xs text-muted-foreground pt-2 border-t border-border">
+                {post.poll.totalVotes} {post.poll.totalVotes === 1 ? 'vote' : 'votes'}
+              </div>
             </div>
           )}
         </div>
